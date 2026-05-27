@@ -1,1166 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Job Tracker</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.7.0/dist/tabler-icons.min.css">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --page:#ece8df;
-  --page-2:#e4dfd2;
-  --page-3:#f1ede4;
-  --surface:rgba(255,253,247,.62);
-  --surface-strong:rgba(255,253,247,.78);
-  --surface-inset:rgba(255,253,247,.42);
-  --text:#26221b;--text2:#736d62;--text3:#9c9588;
-  --line:rgba(60,50,35,.09);
-  --line-2:rgba(60,50,35,.14);
-  --line-strong:rgba(60,50,35,.22);
-  --accent:#534AB7;
-  --accent-2:#3C3489;
-  --accent-soft:#EEEDFE;
-  --radius:10px;
-  --radius-lg:18px;
-  --radius-xl:22px;
-  --shadow-sm:0 1px 0 rgba(255,255,255,.55) inset, 0 1px 2px rgba(60,50,35,.04);
-  --shadow:0 1px 0 rgba(255,255,255,.55) inset, 0 8px 24px -12px rgba(60,50,35,.18);
-  --shadow-lg:0 1px 0 rgba(255,255,255,.6) inset, 0 24px 60px -20px rgba(60,50,35,.28);
-}
-@media(prefers-color-scheme:dark){:root{
-  --page:#1c1916;
-  --page-2:#161310;
-  --page-3:#23201c;
-  --surface:rgba(48,42,35,.55);
-  --surface-strong:rgba(54,48,40,.72);
-  --surface-inset:rgba(40,35,29,.55);
-  --text:#f0ece2;--text2:#a89f8e;--text3:#736b5c;
-  --line:rgba(255,245,225,.07);
-  --line-2:rgba(255,245,225,.11);
-  --line-strong:rgba(255,245,225,.2);
-  --accent-soft:rgba(238,237,254,.12);
-  --shadow-sm:0 1px 0 rgba(255,250,235,.04) inset, 0 1px 2px rgba(0,0,0,.3);
-  --shadow:0 1px 0 rgba(255,250,235,.04) inset, 0 8px 24px -12px rgba(0,0,0,.5);
-  --shadow-lg:0 1px 0 rgba(255,250,235,.05) inset, 0 24px 60px -20px rgba(0,0,0,.7);
-}}
-html,body{min-height:100%}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif;
-  background:var(--page);
-  color:var(--text);
-  min-height:100vh;
-  padding:2.25rem 1rem 3rem;
-  position:relative;
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-}
-body.modal-open{overflow:hidden}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Tracker</title>
 
-/* Themed scrollbars */
-*{scrollbar-width:thin;scrollbar-color:rgba(60,50,35,.22) transparent}
-*::-webkit-scrollbar{width:10px;height:10px}
-*::-webkit-scrollbar-track{background:transparent}
-*::-webkit-scrollbar-thumb{background:rgba(60,50,35,.2);border-radius:999px;border:2px solid transparent;background-clip:padding-box}
-*::-webkit-scrollbar-thumb:hover{background:rgba(60,50,35,.34);background-clip:padding-box;border:2px solid transparent}
-*::-webkit-scrollbar-corner{background:transparent}
-@media(prefers-color-scheme:dark){
-  *{scrollbar-color:rgba(255,245,225,.18) transparent}
-  *::-webkit-scrollbar-thumb{background:rgba(255,245,225,.16);background-clip:padding-box}
-  *::-webkit-scrollbar-thumb:hover{background:rgba(255,245,225,.3);background-clip:padding-box}
-}
-body::before,body::after{
-  content:"";position:fixed;border-radius:50%;filter:blur(80px);opacity:.55;pointer-events:none;z-index:0;
-}
-body::before{width:520px;height:520px;background:var(--page-3);top:-180px;right:-160px}
-body::after{width:460px;height:460px;background:var(--page-2);bottom:-200px;left:-140px}
-@media(prefers-color-scheme:dark){
-  body::before{background:#2a2620;opacity:.7}
-  body::after{background:#1f1c18;opacity:.7}
-}
-.container{max-width:1440px;margin:0 auto;position:relative;z-index:1}
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;gap:16px;flex-wrap:wrap}
-.brand-title{font-size:22px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:12px;letter-spacing:-.02em}
-.brand-icon{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:40px;height:40px;border-radius:12px;
-  background:var(--text);
-  color:var(--page);font-size:19px;
-  box-shadow:var(--shadow-sm);
-}
-.brand-sub{font-size:12px;color:var(--text2);margin-top:3px;letter-spacing:.02em}
-.btn-add{
-  display:inline-flex;align-items:center;gap:7px;
-  font-size:13px;font-weight:600;letter-spacing:.01em;
-  padding:11px 20px;border-radius:999px;border:none;cursor:pointer;
-  background:var(--text);color:var(--page);
-  transition:transform .15s ease,background .15s ease,opacity .15s ease;
-  box-shadow:var(--shadow-sm);
-}
-.btn-add:hover{transform:translateY(-1px);opacity:.92}
-.btn-add:active{transform:translateY(0)}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:1.5rem}
-.stat{
-  background:var(--surface);
-  -webkit-backdrop-filter:blur(24px) saturate(150%);
-  backdrop-filter:blur(24px) saturate(150%);
-  border-radius:var(--radius-lg);
-  padding:18px 18px 16px;
-  position:relative;
-  box-shadow:var(--shadow-sm);
-}
-.stat-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.stat-label{font-size:11px;color:var(--text2);letter-spacing:.06em;text-transform:uppercase;font-weight:500}
-.stat-dot{width:8px;height:8px;border-radius:50%}
-.stat-val{font-size:30px;font-weight:600;color:var(--text);line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.stat-sub{font-size:11.5px;color:var(--text3);margin-top:6px}
-.toolbar{
-  display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;
-  background:var(--surface);
-  -webkit-backdrop-filter:blur(20px) saturate(150%);
-  backdrop-filter:blur(20px) saturate(150%);
-  padding:10px;border-radius:var(--radius-lg);
-  box-shadow:var(--shadow-sm);
-  position:relative;z-index:30;
-}
-.sel-wrap{position:relative;z-index:1}
-.sel-wrap:has(.dd.open),.fg:has(.dd.open){z-index:60}
-.search-wrap{flex:1;min-width:220px;position:relative;display:flex;align-items:center}
-.search-wrap i{position:absolute;left:14px;font-size:15px;color:var(--text2);pointer-events:none}
-.search-wrap input{
-  width:100%;padding:11px 14px 11px 40px;font-size:13px;
-  border:none;border-radius:999px;
-  background:var(--surface-inset);color:var(--text);outline:none;
-  transition:box-shadow .18s ease,background .18s ease;
-}
-.search-wrap input::placeholder{color:var(--text3)}
-.search-wrap input:focus{background:var(--surface-strong);box-shadow:0 0 0 3px rgba(83,74,183,.16)}
-.sel-wrap{position:relative;display:flex;align-items:center}
-.sel-wrap i.sel-leading{position:absolute;left:14px;font-size:14px;color:var(--text2);pointer-events:none;z-index:2}
-.dd{position:relative;font-family:inherit}
-.dd-toggle{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:11px 34px 11px 36px;font-size:12.5px;font-weight:500;
-  border:none;border-radius:999px;
-  background:var(--surface-inset);color:var(--text);
-  cursor:pointer;outline:none;
-  transition:background .18s ease,box-shadow .18s ease;
-  white-space:nowrap;font-family:inherit;
-  text-align:left;min-width:140px;
-}
-.dd-toggle:hover{background:var(--surface)}
-.dd.open .dd-toggle{background:var(--surface-strong);box-shadow:0 0 0 3px rgba(83,74,183,.16)}
-.dd-toggle::after{
-  content:"";position:absolute;right:14px;top:50%;width:7px;height:7px;
-  border-right:1.5px solid var(--text2);border-bottom:1.5px solid var(--text2);
-  transform:translateY(-75%) rotate(45deg);pointer-events:none;
-  transition:transform .2s ease;
-}
-.dd.open .dd-toggle::after{transform:translateY(-25%) rotate(-135deg)}
-.dd-menu{
-  position:absolute;top:calc(100% + 6px);left:0;
-  min-width:100%;
-  background:#fffdf7;
-  border-radius:14px;
-  padding:6px;
-  box-shadow:var(--shadow-lg);
-  z-index:50;
-  opacity:0;transform:translateY(-6px) scale(.98);pointer-events:none;transform-origin:top left;
-  transition:opacity .18s ease,transform .18s ease;
-  max-height:280px;overflow-y:auto;
-}
-.dd.open .dd-menu{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
-.dd-option{
-  display:flex;align-items:center;gap:8px;
-  padding:9px 12px;border-radius:9px;
-  font-size:13px;color:var(--text);cursor:pointer;
-  transition:background .12s;white-space:nowrap;
-  font-family:inherit;
-}
-.dd-option:hover{background:var(--page-3)}
-.dd-option.selected{background:var(--accent-soft);color:var(--accent);font-weight:600}
-.dd-option .dd-check{margin-left:auto;font-size:14px;opacity:0}
-.dd-option.selected .dd-check{opacity:1}
-@media(prefers-color-scheme:dark){
-  .dd-menu{background:#2a2620}
-  .dd-option:hover{background:rgba(255,250,235,.06)}
-  .dd-option.selected{background:rgba(238,237,254,.12);color:#bfb6f5}
-}
-.tbl-card{
-  background:var(--surface);
-  -webkit-backdrop-filter:blur(24px) saturate(150%);
-  backdrop-filter:blur(24px) saturate(150%);
-  border-radius:var(--radius-xl);
-  overflow:hidden;
-  box-shadow:var(--shadow);
-}
-.tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}
-thead th{
-  padding:14px 18px;text-align:left;font-weight:500;
-  font-size:10.5px;color:var(--text2);letter-spacing:.08em;
-  cursor:pointer;user-select:none;white-space:nowrap;
-  background:transparent;
-  transition:color .12s;text-transform:uppercase;
-  position:relative;
-}
-thead th::after{
-  content:"";position:absolute;left:0;right:0;bottom:0;
-  height:1px;background:var(--line);
-}
-thead th:hover{color:var(--text)}
-tbody td{padding:14px 18px;color:var(--text);vertical-align:middle;position:relative}
-tbody tr{transition:background .18s ease}
-tbody td::after{
-  content:"";position:absolute;left:18px;right:18px;bottom:0;height:1px;background:var(--line);
-}
-tbody tr:last-child td::after{display:none}
-tbody tr:hover{background:var(--surface-strong)}
-.th-center{text-align:center}
-.td-center{text-align:center}
-.company-name{font-weight:600;font-size:13.5px;letter-spacing:-.005em}
-.role-text{font-size:12.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px;display:inline-block;vertical-align:middle}
-.loc-text{font-size:12.5px;color:var(--text);font-weight:500}
-.source-chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text2);font-weight:500}
-.source-chip i{font-size:14px}
-.sal-val{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.005em}
-.sal-none{font-size:13px;color:var(--text3)}
-.status-badge{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:5px 14px 5px 12px;border-radius:999px;
-  font-size:11px;font-weight:600;white-space:nowrap;letter-spacing:.01em;
-}
-.status-badge i{font-size:14px;line-height:1}
-.status-badge.cell-pick{margin:0}
-.status-badge.cell-pick:hover{filter:brightness(.96)}
-.source-chip.cell-pick{padding:6px 10px;margin:-6px -10px}
-.s-accepted{background:#DBEBC0;color:#3B6D11}
-.s-rejected{background:#F8D7D7;color:#A32D2D}
-.s-reply{background:#D7E7F8;color:#185FA5}
-.s-interview{background:#F6E0BD;color:#854F0B}
-.s-viewed{background:#E4E0D2;color:#5F5E5A}
-.s-pending{background:#F7D9E5;color:#993556}
-.cell-edit{
-  cursor:text;border-radius:8px;padding:6px 10px;margin:-6px -10px;
-  transition:background .15s ease,box-shadow .15s ease;
-  display:inline-block;min-width:60px;max-width:280px;
-  text-overflow:ellipsis;overflow:hidden;white-space:nowrap;
-  vertical-align:middle;
-}
-.cell-edit:hover{background:#f3efe5}
-.cell-edit:focus{outline:none;background:#fffdf7;box-shadow:0 0 0 3px rgba(83,74,183,.18);white-space:normal;overflow:visible;max-width:none}
-.cell-edit[data-empty="1"]:not(:focus)::before{content:attr(data-placeholder);color:var(--text3)}
-.cell-pick{
-  cursor:pointer;border-radius:8px;padding:6px 10px;margin:-6px -10px;
-  transition:background .15s ease,box-shadow .15s ease;
-  display:inline-block;
-}
-.cell-pick:hover{background:#f3efe5}
-.cell-date{position:relative;display:inline-block;border-radius:8px;padding:6px 10px;margin:-6px -10px;cursor:pointer;transition:background .15s ease}
-.cell-date:hover{background:#f3efe5}
-.cell-date input{
-  position:absolute;inset:0;opacity:0;cursor:pointer;
-  border:none;background:transparent;color-scheme:light;
-}
-@media(prefers-color-scheme:dark){
-  .cell-edit:hover,.cell-pick:hover,.cell-date:hover{background:rgba(255,250,235,.06)}
-  .cell-edit:focus{background:rgba(255,250,235,.04)}
-  .cell-date input{color-scheme:dark}
-}
-/* ── Calendar popup ── */
-.cal-pop{
-  position:absolute;z-index:200;
-  background:#fffdf7;
-  border-radius:14px;
-  padding:14px;
-  box-shadow:var(--shadow-lg);
-  width:280px;
-  font-family:inherit;
-}
-@media(prefers-color-scheme:dark){.cal-pop{background:#2a2620}}
-.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.cal-title{font-size:13.5px;font-weight:600;color:var(--text);letter-spacing:-.01em}
-.cal-nav{display:flex;gap:2px}
-.cal-btn{
-  background:none;border:none;cursor:pointer;
-  width:28px;height:28px;border-radius:8px;
-  color:var(--text2);display:inline-flex;align-items:center;justify-content:center;
-  transition:background .12s,color .12s;font-family:inherit;font-size:14px;
-}
-.cal-btn:hover{background:var(--page-3);color:var(--text)}
-@media(prefers-color-scheme:dark){.cal-btn:hover{background:rgba(255,250,235,.06)}}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
-.cal-dow{font-size:10px;text-align:center;color:var(--text3);font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:6px 0}
-.cal-day{
-  appearance:none;border:none;background:none;cursor:pointer;
-  height:32px;border-radius:8px;
-  font-size:12.5px;font-family:inherit;
-  color:var(--text);transition:background .12s,color .12s;
-  display:flex;align-items:center;justify-content:center;
-}
-.cal-day:hover{background:var(--page-3)}
-.cal-day.muted{color:var(--text3)}
-.cal-day.today{font-weight:700;color:var(--accent)}
-.cal-day.selected{background:var(--accent);color:#fff}
-.cal-day.selected:hover{background:var(--accent-2)}
-.cal-foot{display:flex;justify-content:space-between;margin-top:10px;gap:8px}
-.cal-foot button{
-  flex:1;padding:8px;border:none;border-radius:9px;
-  font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;
-  background:var(--page-3);color:var(--text);transition:background .12s;
-}
-.cal-foot button:hover{background:#e6e0d0}
-@media(prefers-color-scheme:dark){
-  .cal-day:hover{background:rgba(255,250,235,.06)}
-  .cal-foot button{background:#23201c}
-  .cal-foot button:hover{background:#3a342c}
-}
-/* ── Number stepper ── */
-.num-input{
-  display:flex;align-items:center;
-  background:#f3efe5;border-radius:12px;
-  width:100%;
-}
-.num-input input{
-  flex:1;border:none;background:transparent;outline:none;
-  padding:11px 13px;font-size:13.5px;
-  font-family:inherit;color:var(--text);
-  font-variant-numeric:tabular-nums;
-  min-width:0;
-  text-align:left;
-}
-.num-input input::-webkit-outer-spin-button,
-.num-input input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.num-input input[type=number]{-moz-appearance:textfield;appearance:textfield}
-.num-input{position:relative;transition:background .18s ease,box-shadow .18s ease}
-.num-input:focus-within{background:#ece8db}
-@media(prefers-color-scheme:dark){
-  .num-input{background:#23201c}
-  .num-input:focus-within{background:#2a2620}
-}
-.chk{
-  appearance:none;-webkit-appearance:none;
-  width:20px;height:20px;border-radius:6px;
-  background:#f3efe5;
-  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
-  transition:background .15s ease,transform .1s ease;
-  position:relative;vertical-align:middle;
-}
-.chk:hover{background:#ece8db}
-.chk:checked{background:var(--accent)}
-.chk:checked::after{
-  content:"";width:6px;height:10px;
-  border-right:2px solid #fff;border-bottom:2px solid #fff;
-  transform:rotate(45deg) translate(-1px,-1px);
-}
-.chk:disabled{opacity:.5;cursor:wait}
-@media(prefers-color-scheme:dark){
-  .chk{background:#23201c}
-  .chk:hover{background:#2a2620}
-}
-.act-cell{display:flex;gap:2px;justify-content:center}
-.act-btn{
-  background:none;border:none;cursor:pointer;padding:7px;
-  border-radius:8px;color:var(--text2);font-size:15px;
-  transition:background .15s,color .15s;display:flex;align-items:center;
-}
-.act-btn.del:hover{background:#F8D7D7;color:#A32D2D}
-.tbl-footer{
-  padding:14px 20px;display:flex;align-items:center;justify-content:space-between;
-  border-top:1px solid var(--line);
-}
-.tbl-count{font-size:12px;color:var(--text2);font-weight:500}
-.hint{font-size:11px;color:var(--text3)}
-.empty-state{padding:3.5rem;text-align:center;color:var(--text2)}
-.empty-state i{font-size:36px;display:block;margin-bottom:12px;opacity:.4}
-.empty-state p{font-size:14px}
-.modal-overlay{
-  display:none;position:fixed;inset:0;
-  background:rgba(40,30,15,.32);
-  -webkit-backdrop-filter:blur(8px);
-  backdrop-filter:blur(8px);
-  z-index:100;align-items:center;justify-content:center;padding:1rem;
-}
-.modal-overlay.open{display:flex;animation:fadeIn .2s ease}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal{
-  background:#fffdf7;
-  border-radius:var(--radius-xl);
-  width:560px;max-width:100%;
-  display:flex;flex-direction:column;
-  box-shadow:var(--shadow-lg);
-  animation:popIn .25s cubic-bezier(.4,0,.2,1);
-}
-@media(prefers-color-scheme:dark){
-  .modal{background:#2a2620}
-}
-@keyframes popIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
-.modal-header{padding:1.4rem 1.6rem 1.1rem;display:flex;justify-content:space-between;align-items:center;flex:0 0 auto}
-.modal-header h3{font-size:17px;font-weight:600;letter-spacing:-.01em}
-.modal-close{
-  background:var(--surface-inset);border:none;cursor:pointer;padding:7px;
-  border-radius:50%;color:var(--text2);font-size:16px;display:flex;
-  transition:background .15s,color .15s;
-}
-.modal-close:hover{background:var(--surface);color:var(--text)}
-.modal-body{padding:.5rem 1.6rem 1.25rem;flex:0 0 auto;overflow:visible}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.fg-full{grid-column:1/-1}
-.fg{display:flex;flex-direction:column;gap:6px}
-.fg label{font-size:10.5px;font-weight:600;color:var(--text2);letter-spacing:.07em;text-transform:uppercase}
-.fg input,.fg textarea{
-  font-size:13.5px;padding:11px 13px;
-  border:none;border-radius:12px;
-  background:#f3efe5;color:var(--text);outline:none;width:100%;
-  transition:background .18s ease,box-shadow .18s ease;
-  font-family:inherit;
-  appearance:none;
-}
-.fg input:focus,.fg textarea:focus{background:#ece8db;box-shadow:0 0 0 3px rgba(83,74,183,.18)}
-.fg textarea{resize:vertical;min-height:84px;line-height:1.55}
-.fg .dd{width:100%}
-.fg .dd-toggle,.date-toggle{
-  width:100%;display:flex;align-items:center;
-  padding:11px 34px 11px 13px;
-  font-size:13.5px;font-weight:500;
-  background:#f3efe5;border-radius:12px;min-width:0;
-  color:var(--text);
-}
-.date-toggle{position:relative}
-.date-toggle::after{
-  content:"";position:absolute;right:14px;top:50%;width:7px;height:7px;
-  border-right:1.5px solid var(--text2);border-bottom:1.5px solid var(--text2);
-  transform:translateY(-75%) rotate(45deg);pointer-events:none;
-}
-.fg .dd-toggle:hover,.date-toggle:hover{background:#ece8db}
-.fg .dd.open .dd-toggle{background:#ece8db;box-shadow:0 0 0 3px rgba(83,74,183,.18)}
-@media(prefers-color-scheme:dark){
-  .fg input,.fg textarea,.fg .dd-toggle,.date-toggle{background:#23201c}
-  .fg input:focus,.fg textarea:focus,.fg .dd.open .dd-toggle{background:#2a2620}
-  .fg .dd-toggle:hover,.date-toggle:hover{background:#2a2620}
-}
-.modal-footer{padding:1rem 1.6rem 1.4rem;display:flex;justify-content:flex-end;gap:10px;flex:0 0 auto}
-.btn-ghost{
-  padding:11px 20px;border:none;border-radius:999px;
-  font-size:13px;font-weight:500;cursor:pointer;
-  background:var(--surface-inset);color:var(--text);
-  transition:background .15s;font-family:inherit;
-}
-.btn-ghost:hover{background:var(--surface)}
-.btn-primary{
-  padding:11px 22px;border:none;border-radius:999px;
-  font-size:13px;font-weight:600;cursor:pointer;
-  background:var(--text);color:var(--page);
-  transition:transform .15s ease,opacity .15s ease;font-family:inherit;
-  box-shadow:var(--shadow-sm);
-}
-.btn-primary:hover{transform:translateY(-1px);opacity:.92}
-.btn-primary:active{transform:translateY(0)}
-@media(max-width:640px){
-  body{padding:1.25rem .75rem 2rem}
-  .stat-val{font-size:24px}
-  .form-grid{grid-template-columns:1fr}
-  thead th,tbody td{padding:12px 14px}
-  tbody td::after{left:14px;right:14px}
-}
-</style>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<style>
-.login-overlay{position:fixed;inset:0;z-index:500;background:var(--page);display:flex;align-items:center;justify-content:center;padding:1.5rem;overflow:hidden}
-.login-overlay::before,.login-overlay::after{content:"";position:absolute;border-radius:50%;filter:blur(80px);opacity:.55;pointer-events:none}
-.login-overlay::before{width:520px;height:520px;background:var(--page-3);top:-180px;right:-160px}
-.login-overlay::after{width:460px;height:460px;background:var(--page-2);bottom:-200px;left:-140px}
-.login-card{position:relative;z-index:1;background:var(--surface);-webkit-backdrop-filter:blur(24px) saturate(150%);backdrop-filter:blur(24px) saturate(150%);border-radius:var(--radius-xl);padding:48px 40px 40px;width:420px;max-width:100%;box-shadow:var(--shadow);text-align:center}
-.login-icon{display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:16px;background:var(--text);color:var(--page);font-size:24px;margin-bottom:20px}
-.login-title{font-size:22px;font-weight:600;color:var(--text);letter-spacing:-.01em;margin-bottom:8px}
-.login-sub{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:28px}
-#gisBtn{display:flex;justify-content:center;min-height:44px}
-.login-error{margin-top:20px;padding:11px 14px;border-radius:10px;background:#F8D7D7;color:#A32D2D;font-size:12.5px;line-height:1.5;display:none}
-.login-error.show{display:block}
-.user-badge{display:inline-flex;align-items:center;gap:10px;background:var(--surface);-webkit-backdrop-filter:blur(20px) saturate(140%);backdrop-filter:blur(20px) saturate(140%);padding:6px 6px 6px 14px;border-radius:999px;box-shadow:var(--shadow-sm);font-size:12.5px;color:var(--text);font-weight:500}
-.user-badge img{width:28px;height:28px;border-radius:50%;display:block}
-.user-badge button{background:none;border:none;cursor:pointer;width:28px;height:28px;border-radius:50%;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;font-size:14px}
-.user-badge button:hover{background:var(--surface-strong);color:var(--text)}
-.topbar-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.app-hidden{display:none!important}
-@media(prefers-color-scheme:dark){.login-error{background:rgba(163,45,45,.18);color:#f5a5a5}}
-</style>
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.7.0/dist/tabler-icons.min.css">
+
+  <!-- Styles (load order matters: tokens → base → layout → components) -->
+  <link rel="stylesheet" href="styles/tokens.css">
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/components.css">
+
+  <!-- Google Sign-In SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-<div class="login-overlay" id="loginOverlay">
-  <div class="login-card">
-    <div class="login-icon"><i class="ti ti-briefcase"></i></div>
-    <div class="login-title">Job Tracker</div>
-    <div class="login-sub">Sign in with your Google account to continue.</div>
-    <div id="gisBtn"></div>
-    <div class="login-error" id="loginError"></div>
+
+  <!-- ── Login screen ── -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+      <div class="login-icon"><i class="ti ti-briefcase" aria-hidden="true"></i></div>
+      <div class="login-title">Job Tracker</div>
+      <div class="login-sub">Sign in with your Google account to continue.</div>
+      <div id="gisBtn"></div>
+    </div>
   </div>
-</div>
-<div class="container app-hidden" id="app">
-  <div class="topbar">
-    <div>
-      <div class="brand-title">
-        <span class="brand-icon"><i class="ti ti-briefcase" aria-hidden="true"></i></span>
-        Job Tracker
+
+  <!-- ── Main app (hidden until authenticated) ── -->
+  <div class="container app-hidden" id="app">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div>
+        <div class="brand-title">
+          <span class="brand-icon"><i class="ti ti-briefcase" aria-hidden="true"></i></span>
+          Job Tracker
+        </div>
+        <div class="brand-sub">Track all your job applications</div>
       </div>
-      <div class="brand-sub">Track all your job applications</div>
+      <div class="topbar-right">
+        <div class="user-badge" id="userBadge"></div>
+        <button class="btn-add" type="button" id="btnAdd">
+          <i class="ti ti-plus" aria-hidden="true"></i>Add application
+        </button>
+      </div>
     </div>
-    <div class="topbar-right">
-      <div class="user-badge" id="userBadge"></div>
-      <button class="btn-add" onclick="openModal()"><i class="ti ti-plus" aria-hidden="true"></i>Add application</button>
-    </div>
-  </div>
 
-  <div class="stats" id="statsBar"></div>
+    <!-- Stats bar -->
+    <div class="stats" id="statsBar"></div>
 
-  <div class="toolbar">
-    <div class="search-wrap">
-      <i class="ti ti-search" aria-hidden="true"></i>
-      <input type="text" id="searchInput" placeholder="Search company, role, location...">
+    <!-- Toolbar: search + filters -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <input type="text" id="searchInput" placeholder="Search company, role, location...">
+      </div>
+      <div class="sel-wrap">
+        <i class="ti ti-adjustments-horizontal sel-leading" aria-hidden="true"></i>
+        <div class="dd" data-dd="filterStatus" data-placeholder="All statuses"></div>
+      </div>
+      <div class="sel-wrap">
+        <i class="ti ti-map-pin sel-leading" aria-hidden="true"></i>
+        <div class="dd" data-dd="filterLoc" data-placeholder="All locations"></div>
+      </div>
+      <div class="sel-wrap">
+        <i class="ti ti-layout-list sel-leading" aria-hidden="true"></i>
+        <div class="dd" data-dd="filterSource" data-placeholder="All sources"></div>
+      </div>
     </div>
-    <div class="sel-wrap">
-      <i class="ti ti-adjustments-horizontal sel-leading" aria-hidden="true"></i>
-      <div class="dd" data-dd="filterStatus" data-placeholder="All statuses" data-onchange="render"></div>
-    </div>
-    <div class="sel-wrap">
-      <i class="ti ti-map-pin sel-leading" aria-hidden="true"></i>
-      <div class="dd" data-dd="filterLoc" data-placeholder="All locations" data-onchange="render"></div>
-    </div>
-    <div class="sel-wrap">
-      <i class="ti ti-layout-list sel-leading" aria-hidden="true"></i>
-      <div class="dd" data-dd="filterSource" data-placeholder="All sources" data-onchange="render"></div>
-    </div>
-  </div>
 
-  <div class="tbl-card">
-    <div class="tbl-wrap">
-      <table>
-        <colgroup>
-          <col style="width:16%">
-          <col style="width:22%">
-          <col style="width:11%">
-          <col style="width:6%">
-          <col style="width:6%">
-          <col style="width:9%">
-          <col style="width:9%">
-          <col style="width:9%">
-          <col style="width:9%">
-          <col style="width:64px">
-        </colgroup>
-        <thead>
-          <tr>
-            <th onclick="sortBy('company')">Company <span id="s-company"></span></th>
-            <th onclick="sortBy('role')">Role <span id="s-role"></span></th>
-            <th onclick="sortBy('status')" class="th-center">Status <span id="s-status"></span></th>
-            <th class="th-center">Interview 1</th>
-            <th class="th-center">Interview 2</th>
-            <th onclick="sortBy('applyDate')" class="th-center">Apply date <span id="s-applyDate"></span></th>
-            <th onclick="sortBy('location')" class="th-center">Location <span id="s-location"></span></th>
-            <th onclick="sortBy('foundOn')" class="th-center">Found on <span id="s-foundOn"></span></th>
-            <th onclick="sortBy('salary')" class="th-center">Salary (THB) <span id="s-salary"></span></th>
-            <th class="th-center">—</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
+    <!-- Applications table -->
+    <div class="tbl-card">
+      <div class="tbl-wrap">
+        <table>
+          <colgroup>
+            <col style="width:16%">
+            <col style="width:22%">
+            <col style="width:11%">
+            <col style="width:6%">
+            <col style="width:6%">
+            <col style="width:9%">
+            <col style="width:9%">
+            <col style="width:9%">
+            <col style="width:9%">
+            <col style="width:64px">
+          </colgroup>
+          <thead>
+            <tr>
+              <th data-sort="company">Company <span id="s-company"></span></th>
+              <th data-sort="role">Role <span id="s-role"></span></th>
+              <th data-sort="status" class="th-center">Status <span id="s-status"></span></th>
+              <th class="th-center">Interview 1</th>
+              <th class="th-center">Interview 2</th>
+              <th data-sort="applyDate" class="th-center">Apply date <span id="s-applyDate"></span></th>
+              <th data-sort="location" class="th-center">Location <span id="s-location"></span></th>
+              <th data-sort="foundOn" class="th-center">Found on <span id="s-foundOn"></span></th>
+              <th data-sort="salary" class="th-center">Salary (THB) <span id="s-salary"></span></th>
+              <th class="th-center">—</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="tbl-footer">
+        <span class="tbl-count" id="tblCount"></span>
+        <span class="hint">Click a column header to sort</span>
+      </div>
     </div>
-    <div class="tbl-footer">
-      <span class="tbl-count" id="tblCount"></span>
-      <span class="hint">Click a column header to sort</span>
-    </div>
-  </div>
-</div>
 
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <div class="modal-header">
-      <h3 id="modalTitle">Add application</h3>
-      <button class="modal-close" onclick="closeModal()"><i class="ti ti-x" aria-hidden="true"></i></button>
-    </div>
-    <div class="modal-body">
-      <div class="form-grid">
-        <div class="fg fg-full"><label>Company</label><input id="f_company" type="text" placeholder="e.g. Google"></div>
-        <div class="fg fg-full"><label>Role / Position</label><input id="f_role" type="text" placeholder="e.g. Network Engineer"></div>
-        <div class="fg">
-          <label>Location</label>
-          <div class="dd" data-dd="f_location"></div>
-        </div>
-        <div class="fg">
-          <label>Apply date</label>
-          <button type="button" class="dd-toggle date-toggle" id="f_applyDate_btn">Select date</button>
-          <input id="f_applyDate" type="hidden">
-        </div>
-        <div class="fg">
-          <label>Found on</label>
-          <div class="dd" data-dd="f_foundOn"></div>
-        </div>
-        <div class="fg">
-          <label>Requested salary (THB)</label>
-          <div class="num-input">
-            <input id="f_salary" type="number" inputmode="numeric" min="0" step="1000" placeholder="e.g. 45000">
+  </div><!-- /app -->
+
+  <!-- ── Add / Edit modal ── -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add application</h3>
+        <button class="modal-close" type="button" id="modalClose" aria-label="Close">
+          <i class="ti ti-x" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="fg fg-full">
+            <label for="f_company">Company</label>
+            <input id="f_company" type="text" placeholder="e.g. Google">
+          </div>
+          <div class="fg fg-full">
+            <label for="f_role">Role / Position</label>
+            <input id="f_role" type="text" placeholder="e.g. Network Engineer">
+          </div>
+          <div class="fg">
+            <label>Location</label>
+            <div class="dd" data-dd="f_location"></div>
+          </div>
+          <div class="fg">
+            <label>Apply date</label>
+            <button type="button" class="dd-toggle date-toggle" id="f_applyDate_btn">Select date</button>
+            <input id="f_applyDate" type="hidden">
+          </div>
+          <div class="fg">
+            <label>Found on</label>
+            <div class="dd" data-dd="f_foundOn"></div>
+          </div>
+          <div class="fg">
+            <label for="f_salary">Requested salary (THB)</label>
+            <div class="num-input">
+              <input id="f_salary" type="number" inputmode="numeric" min="0" step="1000" placeholder="e.g. 45000">
+            </div>
+          </div>
+          <div class="fg fg-full">
+            <label>Status</label>
+            <div class="dd" data-dd="f_status"></div>
           </div>
         </div>
-        <div class="fg fg-full">
-          <label>Status</label>
-          <div class="dd" data-dd="f_status"></div>
-        </div>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn-primary" onclick="saveJob()">Save</button>
+      <div class="modal-footer">
+        <button class="btn-ghost" type="button" id="btnCancel">Cancel</button>
+        <button class="btn-primary" type="button" id="btnSave">Save</button>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-// ===== Google Apps Script Web App URL =====
-const API_URL='https://script.google.com/macros/s/AKfycbwqZls3PVPo-fybN8xGnIBB7GsfygB7vErF7zowLNVKH5dT55dAYgKHhTD27fr6A5aNEg/exec';
-const GOOGLE_CLIENT_ID='479414655504-c6nfa84s18tl8ritag7kfqk0gsrtleer.apps.googleusercontent.com';
-// =========================================
-
-let jobs=[];
-let sCol='applyDate',sDir=1,editId=null;
-let busy=false;
-let idToken=sessionStorage.getItem('jt_token')||'';
-let userInfo=null;
-try{userInfo=JSON.parse(sessionStorage.getItem('jt_user')||'null')}catch(e){}
-
-function decodeJwt(t){
-  try{
-    const part=t.split('.')[1];
-    const json=atob(part.replace(/-/g,'+').replace(/_/g,'/'));
-    return JSON.parse(decodeURIComponent(escape(json)));
-  }catch(e){return null}
-}
-
-function onCredential(resp){
-  idToken=resp.credential;
-  const info=decodeJwt(idToken);
-  if(!info){showLoginError('Invalid token');return}
-  userInfo={email:info.email,name:info.name,picture:info.picture,exp:info.exp};
-  sessionStorage.setItem('jt_token',idToken);
-  sessionStorage.setItem('jt_user',JSON.stringify(userInfo));
-  enterApp();
-}
-
-function showLoginError(msg){
-  const el=document.getElementById('loginError');
-  el.textContent=msg;
-  el.classList.add('show');
-}
-
-function signOut(){
-  idToken='';userInfo=null;
-  sessionStorage.removeItem('jt_token');
-  sessionStorage.removeItem('jt_user');
-  if(window.google&&google.accounts&&google.accounts.id)google.accounts.id.disableAutoSelect();
-  document.getElementById('app').classList.add('app-hidden');
-  document.getElementById('loginOverlay').style.display='flex';
-  renderUserBadge();
-}
-
-function renderUserBadge(){
-  const el=document.getElementById('userBadge');
-  if(!el)return;
-  if(!userInfo){el.innerHTML='';return}
-  el.innerHTML=`<img src="${userInfo.picture}" alt="" referrerpolicy="no-referrer"><span>${userInfo.email}</span><button onclick="signOut()" title="Sign out"><i class="ti ti-logout"></i></button>`;
-}
-
-function enterApp(){
-  document.getElementById('loginOverlay').style.display='none';
-  document.getElementById('app').classList.remove('app-hidden');
-  renderUserBadge();
-  loadJobs();
-}
-
-function initGsi(){
-  if(!window.google||!google.accounts||!google.accounts.id){setTimeout(initGsi,200);return}
-  google.accounts.id.initialize({
-    client_id:GOOGLE_CLIENT_ID,
-    callback:onCredential,
-    auto_select:false,
-  });
-  google.accounts.id.renderButton(
-    document.getElementById('gisBtn'),
-    {theme:'outline',size:'large',shape:'pill',text:'signin_with',width:280}
-  );
-}
-
-function bootstrap(){
-  if(idToken&&userInfo&&userInfo.exp*1000>Date.now()+60000){
-    enterApp();
-  }else{
-    sessionStorage.removeItem('jt_token');
-    sessionStorage.removeItem('jt_user');
-    idToken='';userInfo=null;
-    initGsi();
-  }
-}
-window.addEventListener('load',bootstrap);
-
-async function api(payload){
-  if(!idToken){signOut();throw new Error('Not signed in')}
-  let res,data;
-  if(payload){
-    res=await fetch(API_URL,{method:'POST',body:JSON.stringify({...payload,token:idToken}),headers:{'Content-Type':'text/plain;charset=utf-8'}});
-  }else{
-    res=await fetch(API_URL+'?token='+encodeURIComponent(idToken));
-  }
-  data=await res.json();
-  if(!data.ok){
-    if(/token|allowed|expired|audience/i.test(data.error||'')){signOut();showLoginError(data.error)}
-    throw new Error(data.error||'API error');
-  }
-  return data;
-}
-
-function setBusy(v){
-  busy=v;
-  document.body.style.cursor=v?'progress':'';
-}
-
-function normalizeDate(v){
-  if(v==null||v==='')return'';
-  const str=String(v);
-  if(/^\d{4}-\d{2}-\d{2}T/.test(str)){
-    const d=new Date(str);
-    if(!isNaN(d))return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
-  }
-  if(/^\d{4}-\d{2}-\d{2}$/.test(str)){
-    const p=str.split('-');
-    return `${parseInt(p[2])}/${parseInt(p[1])}/${p[0]}`;
-  }
-  return str;
-}
-async function loadJobs(){
-  setBusy(true);
-  try{
-    const d=await api();
-    jobs=(d.jobs||[]).map(j=>({...j,applyDate:normalizeDate(j.applyDate)}));
-    render();
-  }catch(e){
-    alert('Failed to load: '+e.message);
-  }finally{setBusy(false);}
-}
-
-function save(){/* no-op — เขียนผ่าน api() */}
-
-const DD_OPTS={
-  filterStatus:['Automate Mail Reply','Rejected','Schedule for Interview','Application Viewed','Accepted','Pending'],
-  filterLoc:['Bangkok','Nonthaburi','Pathum Thani','Samut Prakan','Nakhon Pathom','Samut Sakhon','Remote','Hybrid','Other'],
-  filterSource:['JobsDB','JobThai','Facebook','LinkedIn',"Company's Website",'Other'],
-  f_location:['Bangkok','Nonthaburi','Pathum Thani','Samut Prakan','Nakhon Pathom','Samut Sakhon','Remote','Hybrid','Other'],
-  f_foundOn:['JobsDB','JobThai','Facebook','LinkedIn',"Company's Website",'Other'],
-  f_status:['Pending','Automate Mail Reply','Application Viewed','Schedule for Interview','Accepted','Rejected'],
-};
-const ddState={};
-function ddBuild(dd){
-  const key=dd.dataset.dd;
-  const opts=DD_OPTS[key]||[];
-  const placeholder=dd.dataset.placeholder||'';
-  if(!(key in ddState))ddState[key]=placeholder?'':opts[0]||'';
-  const cur=ddState[key];
-  const label=cur||placeholder;
-  dd.innerHTML=`<button type="button" class="dd-toggle">${label}</button>
-    <div class="dd-menu" role="listbox">
-      ${placeholder?`<div class="dd-option${cur===''?' selected':''}" data-val="">${placeholder}<span class="dd-check"><i class="ti ti-check"></i></span></div>`:''}
-      ${opts.map(o=>`<div class="dd-option${o===cur?' selected':''}" data-val="${o.replace(/"/g,'&quot;')}">${o}<span class="dd-check"><i class="ti ti-check"></i></span></div>`).join('')}
-    </div>`;
-  const toggle=dd.querySelector('.dd-toggle');
-  toggle.addEventListener('click',e=>{
-    e.stopPropagation();
-    const wasOpen=dd.classList.contains('open');
-    document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'));
-    if(!wasOpen)dd.classList.add('open');
-  });
-  dd.querySelectorAll('.dd-option').forEach(opt=>{
-    opt.addEventListener('click',e=>{
-      e.stopPropagation();
-      const val=opt.dataset.val;
-      ddSet(key,val);
-      dd.classList.remove('open');
-      const cb=dd.dataset.onchange;
-      if(cb&&typeof window[cb]==='function')window[cb]();
-    });
-  });
-}
-function ddSet(key,val){
-  ddState[key]=val;
-  document.querySelectorAll(`.dd[data-dd="${key}"]`).forEach(ddBuild);
-}
-function ddGet(key){return ddState[key]||'';}
-document.addEventListener('click',e=>{
-  if(!e.target.closest('.dd'))document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'));
-});
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape')document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'));
-});
-
-function locShort(l){return l||''}
-function statusInfo(s){
-  const m={
-    'Automate Mail Reply':['s-reply','ti-mail-forward','Mail reply'],
-    'Rejected':['s-rejected','ti-circle-x','Rejected'],
-    'Schedule for Interview':['s-interview','ti-calendar-event','Interview'],
-    'Application Viewed':['s-viewed','ti-eye-check','Viewed'],
-    'Accepted':['s-accepted','ti-circle-check','Accepted'],
-    'Pending':['s-pending','ti-hourglass','Pending'],
-  };
-  return m[s]||['s-pending','ti-hourglass',s];
-}
-
-// ── Custom calendar picker ──
-const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
-const DOWS=['Su','Mo','Tu','We','Th','Fr','Sa'];
-function parseISO(s){
-  if(!s)return null;
-  const p=s.split('-');
-  if(p.length!==3)return null;
-  return new Date(Number(p[0]),Number(p[1])-1,Number(p[2]));
-}
-function toISO(d){
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-function sameDay(a,b){return a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate()}
-function fmtDisplay(iso){
-  const d=parseISO(iso);
-  if(!d)return 'Select date';
-  return `${d.getDate()} ${MONTHS[d.getMonth()].slice(0,3)} ${d.getFullYear()}`;
-}
-let calState=null;
-function closeCal(){const p=document.querySelector('.cal-pop');if(p)p.remove();calState=null;document.removeEventListener('click',calOutside)}
-function calOutside(e){if(!e.target.closest('.cal-pop')&&!(calState&&calState.anchor.contains(e.target)))closeCal()}
-function buildCal(){
-  if(!calState)return;
-  const{view,selected,pop}=calState;
-  const y=view.getFullYear(),m=view.getMonth();
-  const first=new Date(y,m,1);
-  const startDow=first.getDay();
-  const daysInMonth=new Date(y,m+1,0).getDate();
-  const daysPrev=new Date(y,m,0).getDate();
-  const today=new Date();
-  const cells=[];
-  for(let i=startDow-1;i>=0;i--)cells.push({d:daysPrev-i,muted:true,date:new Date(y,m-1,daysPrev-i)});
-  for(let i=1;i<=daysInMonth;i++)cells.push({d:i,muted:false,date:new Date(y,m,i)});
-  while(cells.length%7!==0||cells.length<42){const d=cells.length-(startDow+daysInMonth)+1;cells.push({d,muted:true,date:new Date(y,m+1,d)})}
-  pop.innerHTML=`
-    <div class="cal-head">
-      <div class="cal-title">${MONTHS[m]} ${y}</div>
-      <div class="cal-nav">
-        <button type="button" class="cal-btn" data-nav="-1" aria-label="Previous month">‹</button>
-        <button type="button" class="cal-btn" data-nav="1" aria-label="Next month">›</button>
-      </div>
-    </div>
-    <div class="cal-grid">
-      ${DOWS.map(d=>`<div class="cal-dow">${d}</div>`).join('')}
-      ${cells.map(c=>{
-        const isSel=selected&&sameDay(c.date,selected);
-        const isToday=sameDay(c.date,today);
-        const cls=['cal-day'];
-        if(c.muted)cls.push('muted');
-        if(isToday)cls.push('today');
-        if(isSel)cls.push('selected');
-        return `<button type="button" class="${cls.join(' ')}" data-iso="${toISO(c.date)}">${c.d}</button>`;
-      }).join('')}
-    </div>
-    <div class="cal-foot">
-      <button type="button" data-action="today">Today</button>
-      <button type="button" data-action="clear">Clear</button>
-    </div>`;
-  pop.querySelectorAll('.cal-btn').forEach(b=>b.addEventListener('click',e=>{
-    e.stopPropagation();
-    calState.view=new Date(y,m+Number(b.dataset.nav),1);
-    buildCal();
-  }));
-  pop.querySelectorAll('.cal-day').forEach(b=>b.addEventListener('click',e=>{
-    e.stopPropagation();
-    const iso=b.dataset.iso;
-    calState.onPick(iso);
-    closeCal();
-  }));
-  pop.querySelector('[data-action="today"]').addEventListener('click',e=>{
-    e.stopPropagation();
-    calState.onPick(toISO(today));
-    closeCal();
-  });
-  pop.querySelector('[data-action="clear"]').addEventListener('click',e=>{
-    e.stopPropagation();
-    calState.onPick('');
-    closeCal();
-  });
-}
-function openCal(anchor,currentISO,onPick){
-  closeCal();
-  const pop=document.createElement('div');
-  pop.className='cal-pop';
-  document.body.appendChild(pop);
-  const sel=parseISO(currentISO);
-  calState={anchor,view:sel||new Date(),selected:sel,pop,onPick};
-  buildCal();
-  const r=anchor.getBoundingClientRect();
-  let left=r.left+window.scrollX;
-  let top=r.bottom+window.scrollY+6;
-  const popW=280;
-  if(left+popW>window.innerWidth-12)left=window.innerWidth-popW-12;
-  pop.style.left=left+'px';
-  pop.style.top=top+'px';
-  setTimeout(()=>document.addEventListener('click',calOutside),0);
-}
-
-function sortBy(col){
-  if(sCol===col)sDir*=-1;else{sCol=col;sDir=1;}
-  ['company','role','location','applyDate','foundOn','salary','status'].forEach(c=>{
-    const el=document.getElementById('s-'+c);
-    if(el)el.textContent=c===sCol?(sDir===1?'↑':'↓'):'';
-  });
-  render();
-}
-
-function filtered(){
-  const q=document.getElementById('searchInput').value.toLowerCase();
-  const st=ddGet('filterStatus');
-  const lc=ddGet('filterLoc');
-  const src=ddGet('filterSource');
-  return jobs.filter(j=>{
-    return(!q||(j.company+j.role+j.location+j.foundOn).toLowerCase().includes(q))&&
-           (!st||j.status===st)&&(!lc||j.location.includes(lc))&&(!src||j.foundOn===src);
-  });
-}
-
-function render(){
-  const data=[...filtered()].sort((a,b)=>{
-    let av=a[sCol]||'',bv=b[sCol]||'';
-    if(sCol==='salary')return((parseFloat(av)||0)-(parseFloat(bv)||0))*sDir;
-    return av.localeCompare(bv)*sDir;
-  });
-
-  const total=jobs.length;
-  const byS=s=>jobs.filter(j=>j.status===s).length;
-  const pending=jobs.filter(j=>['Automate Mail Reply','Application Viewed','Pending'].includes(j.status)).length;
-  document.getElementById('statsBar').innerHTML=[
-    {label:'Total applied',val:total,sub:'All applications',dot:'#534AB7'},
-    {label:'Accepted',val:byS('Accepted'),sub:'Offers received',dot:'#639922'},
-    {label:'Interview',val:byS('Schedule for Interview'),sub:'Scheduled',dot:'#EF9F27'},
-    {label:'In progress',val:pending,sub:'Awaiting response',dot:'#378ADD'},
-    {label:'Rejected',val:byS('Rejected'),sub:'Not selected',dot:'#E24B4A'},
-  ].map(s=>`<div class="stat"><div class="stat-head"><div class="stat-label">${s.label}</div><div class="stat-dot" style="background:${s.dot}"></div></div><div class="stat-val">${s.val}</div><div class="stat-sub">${s.sub}</div></div>`).join('');
-
-  document.getElementById('tblCount').textContent=`Showing ${data.length} of ${total}`;
-
-  const srcIco={'JobsDB':'ti-briefcase','JobThai':'ti-id-badge-2','Facebook':'ti-brand-facebook','LinkedIn':'ti-brand-linkedin',"Company's Website":'ti-building','OIA KMITL':'ti-school'};
-  const tbody=document.getElementById('tbody');
-  if(!data.length){
-    tbody.innerHTML=`<tr><td colspan="10"><div class="empty-state"><i class="ti ti-inbox"></i><p>No matching applications</p></div></td></tr>`;
-    return;
-  }
-  tbody.innerHTML=data.map(j=>{
-    const[sc,si,sl]=statusInfo(j.status);
-    const ico=srcIco[j.foundOn]||'ti-world';
-    const srcLabel=j.foundOn==="Company's Website"?"Website":j.foundOn;
-    const i1=j.interview1==true||j.interview1==='TRUE'||j.interview1==='true'||j.interview1===1;
-    const i2=j.interview2==true||j.interview2==='TRUE'||j.interview2==='true'||j.interview2===1;
-    const isoDate=pd(j.applyDate);
-    return`<tr data-id="${j.id}">
-      <td><span class="company-name cell-edit" contenteditable="plaintext-only" data-field="company" data-placeholder="Company" data-empty="${j.company?'0':'1'}">${esc(j.company)}</span></td>
-      <td><span class="role-text cell-edit" contenteditable="plaintext-only" data-field="role" data-placeholder="Role" data-empty="${j.role?'0':'1'}" title="${esc(j.role)}">${esc(j.role)}</span></td>
-      <td class="td-center"><span class="status-badge cell-pick ${sc}" data-field="status"><i class="ti ${si}"></i>${sl}</span></td>
-      <td class="td-center"><input type="checkbox" class="chk" ${i1?'checked':''} onchange="toggleInterview(${j.id},'interview1',this)"></td>
-      <td class="td-center"><input type="checkbox" class="chk" ${i2?'checked':''} onchange="toggleInterview(${j.id},'interview2',this)"></td>
-      <td class="td-center" style="font-size:12.5px;color:var(--text2);white-space:nowrap"><span class="cell-pick" data-field="applyDate" data-iso="${isoDate}">${j.applyDate||'—'}</span></td>
-      <td class="td-center"><span class="loc-text cell-pick" data-field="location">${locShort(j.location)}</span></td>
-      <td class="td-center"><span class="source-chip cell-pick" data-field="foundOn"><i class="ti ${ico}" style="font-size:13px"></i>${srcLabel}</span></td>
-      <td class="td-center"><span class="cell-edit ${j.salary?'sal-val':'sal-none'}" contenteditable="plaintext-only" inputmode="numeric" data-field="salary" data-placeholder="—" data-empty="${j.salary?'0':'1'}">${j.salary?'฿'+Number(j.salary).toLocaleString():''}</span></td>
-      <td class="td-center"><div class="act-cell"><button class="act-btn del" onclick="delJob(${j.id})" title="Delete"><i class="ti ti-trash"></i></button></div></td>
-    </tr>`;
-  }).join('');
-  bindInline();
-}
-
-function openModal(id=null){
-  editId=id;
-  document.getElementById('modalTitle').textContent=id?'Edit application':'Add application';
-  if(id){
-    const j=jobs.find(x=>x.id===id);
-    document.getElementById('f_company').value=j.company;
-    document.getElementById('f_role').value=j.role;
-    ddSet('f_location',j.location);
-    setApplyDate(pd(j.applyDate));
-    ddSet('f_foundOn',j.foundOn);
-    document.getElementById('f_salary').value=j.salary;
-    ddSet('f_status',j.status);
-  }else{
-    ['f_company','f_role','f_salary'].forEach(id=>document.getElementById(id).value='');
-    ddSet('f_location','Bangkok');
-    setApplyDate(new Date().toISOString().slice(0,10));
-    ddSet('f_foundOn','JobsDB');
-    ddSet('f_status','Pending');
-  }
-  document.getElementById('modalOverlay').classList.add('open');
-  document.body.classList.add('modal-open');
-}
-function closeModal(){document.getElementById('modalOverlay').classList.remove('open');document.body.classList.remove('modal-open');closeCal();}
-
-function setApplyDate(iso){
-  document.getElementById('f_applyDate').value=iso||'';
-  document.getElementById('f_applyDate_btn').textContent=iso?fmtDisplay(iso):'Select date';
-}
-document.getElementById('f_applyDate_btn').addEventListener('click',e=>{
-  e.stopPropagation();
-  const cur=document.getElementById('f_applyDate').value;
-  openCal(e.currentTarget,cur,iso=>setApplyDate(iso));
-});
-async function delJob(id){
-  if(busy)return;
-  if(!confirm('Delete this application?'))return;
-  setBusy(true);
-  try{const d=await api({action:'delete',id});jobs=(d.jobs||[]).map(j=>({...j,applyDate:normalizeDate(j.applyDate)}));render();}
-  catch(e){alert('Failed to delete: '+e.message);}
-  finally{setBusy(false);}
-}
-function pd(d){
-  if(!d||d.includes('-'))return d||'';
-  const p=d.split('/');
-  return p.length===3?`${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`:d;
-}
-function fd(d){
-  if(!d)return'';
-  const p=d.split('-');
-  return p.length===3?`${parseInt(p[2])}/${parseInt(p[1])}/${p[0]}`:d;
-}
-async function saveJob(){
-  if(busy)return;
-  const existing=editId?jobs.find(x=>x.id===editId):null;
-  const j={
-    company:document.getElementById('f_company').value.trim()||'Unknown',
-    role:document.getElementById('f_role').value.trim(),
-    location:ddGet('f_location'),
-    applyDate:fd(document.getElementById('f_applyDate').value),
-    foundOn:ddGet('f_foundOn'),
-    salary:document.getElementById('f_salary').value,
-    status:ddGet('f_status'),
-    interview1:existing?existing.interview1:false,
-    interview2:existing?existing.interview2:false,
-  };
-  setBusy(true);
-  try{
-    let d;
-    if(editId){j.id=editId;d=await api({action:'update',job:j});}
-    else{d=await api({action:'add',job:j});}
-    jobs=(d.jobs||[]).map(j=>({...j,applyDate:normalizeDate(j.applyDate)}));
-    closeModal();render();
-  }catch(e){alert('Failed to save: '+e.message);}
-  finally{setBusy(false);}
-}
-
-function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-
-async function updateField(id,field,value){
-  if(busy)return false;
-  const j=jobs.find(x=>x.id===id);
-  if(!j)return false;
-  const prev=j[field];
-  if(prev===value||(prev==null&&value===''))return false;
-  j[field]=value;
-  setBusy(true);
-  try{
-    const d=await api({action:'update',job:j});
-    jobs=(d.jobs||[]).map(j=>({...j,applyDate:normalizeDate(j.applyDate)}));
-    return true;
-  }catch(e){
-    j[field]=prev;
-    alert('อัปเดตไม่สำเร็จ: '+e.message);
-    return false;
-  }finally{setBusy(false);}
-}
-
-const PICKER_OPTS={
-  location:['Bangkok','Nonthaburi','Pathum Thani','Samut Prakan','Nakhon Pathom','Samut Sakhon','Remote','Hybrid','Other'],
-  foundOn:['JobsDB','JobThai','Facebook','LinkedIn',"Company's Website",'Other'],
-  status:['Pending','Automate Mail Reply','Application Viewed','Schedule for Interview','Accepted','Rejected'],
-};
-function showPicker(anchor,field,id,current){
-  closePicker();
-  const opts=PICKER_OPTS[field]||[];
-  const pop=document.createElement('div');
-  pop.className='dd-menu picker-pop';
-  pop.style.cssText='position:absolute;z-index:200;opacity:1;transform:none;pointer-events:auto;min-width:180px';
-  pop.innerHTML=opts.map(o=>`<div class="dd-option${o===current?' selected':''}" data-val="${esc(o)}">${esc(o)}<span class="dd-check"><i class="ti ti-check"></i></span></div>`).join('');
-  document.body.appendChild(pop);
-  const r=anchor.getBoundingClientRect();
-  pop.style.left=(r.left+window.scrollX)+'px';
-  pop.style.top=(r.bottom+window.scrollY+4)+'px';
-  pop.querySelectorAll('.dd-option').forEach(o=>{
-    o.addEventListener('click',async e=>{
-      e.stopPropagation();
-      const v=o.dataset.val;
-      closePicker();
-      if(v!==current){const ok=await updateField(id,field,v);if(ok)render();}
-    });
-  });
-  setTimeout(()=>document.addEventListener('click',closePicker,{once:true}),0);
-}
-function closePicker(){const p=document.querySelector('.picker-pop');if(p)p.remove();}
-
-function bindInline(){
-  document.querySelectorAll('#tbody .cell-edit').forEach(el=>{
-    const id=Number(el.closest('tr').dataset.id);
-    const field=el.dataset.field;
-    el.addEventListener('focus',()=>{
-      if(field==='salary'){
-        const j=jobs.find(x=>x.id===id);
-        el.textContent=j&&j.salary?String(j.salary):'';
-      }
-    });
-    el.addEventListener('blur',async()=>{
-      let v=el.textContent.trim();
-      if(field==='salary')v=v.replace(/[^\d.]/g,'');
-      const ok=await updateField(id,field,v);
-      if(ok)render(); else render();
-    });
-    el.addEventListener('keydown',e=>{
-      if(e.key==='Enter'){e.preventDefault();el.blur();}
-      if(e.key==='Escape'){e.preventDefault();render();}
-    });
-  });
-  document.querySelectorAll('#tbody .cell-pick').forEach(el=>{
-    const id=Number(el.closest('tr').dataset.id);
-    const field=el.dataset.field;
-    el.addEventListener('click',e=>{
-      e.stopPropagation();
-      const j=jobs.find(x=>x.id===id);
-      if(field==='applyDate'){
-        openCal(el,el.dataset.iso||'',async iso=>{
-          const v=iso?fd(iso):'';
-          const ok=await updateField(id,'applyDate',v);
-          if(ok)render();
-        });
-      }else{
-        showPicker(el,field,id,j?j[field]:'');
-      }
-    });
-  });
-}
-
-async function toggleInterview(id,field,el){
-  if(busy){el.checked=!el.checked;return;}
-  const j=jobs.find(x=>x.id===id);
-  if(!j)return;
-  const prev=j[field];
-  j[field]=el.checked;
-  el.disabled=true;
-  try{
-    const d=await api({action:'update',job:j});
-    jobs=d.jobs||[];
-  }catch(e){
-    j[field]=prev;el.checked=!!prev;
-    alert('อัปเดตไม่สำเร็จ: '+e.message);
-  }finally{el.disabled=false;}
-}
-document.getElementById('searchInput').addEventListener('input',render);
-document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
-document.querySelectorAll('.dd').forEach(ddBuild);
-sortBy('applyDate');
-</script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
