@@ -12,7 +12,7 @@ function loadUserInfo() {
 export const state = {
   jobs:          [],
   sortColumn:    'applyDate',
-  sortDirection: 1,
+  sortDirection: -1,
   editId:        null,
   isLoading:     false,
   idToken:       sessionStorage.getItem('jt_token') || '',

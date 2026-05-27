@@ -6,7 +6,7 @@ import { STATUS_MAP, SRC_ICONS, OPTIONS, SORT_COLUMNS, IN_PROGRESS_STATUSES } fr
 import { updateField }                                 from './api.js';
 import { ddGet }                                       from './dropdown.js';
 import { openCal }                                     from './calendar.js';
-import { displayToIso, isoToDisplay }                  from './date.js';
+import { displayToIso, isoToDisplay, parseISO }        from './date.js';
 import { isTruthy, escapeHtml }                        from './utils.js';
 
 function countByStatus(status) {
@@ -146,9 +146,18 @@ export function renderTable() {
   const sorted = [...getFilteredJobs()].sort((a, b) => {
     const aVal = a[state.sortColumn] || '';
     const bVal = b[state.sortColumn] || '';
+
     if (state.sortColumn === 'salary') {
       return ((parseFloat(aVal) || 0) - (parseFloat(bVal) || 0)) * state.sortDirection;
     }
+
+    if (state.sortColumn === 'applyDate') {
+      // applyDate is "D/M/YYYY" — convert to ISO so comparison is chronological
+      const aDate = parseISO(displayToIso(aVal))?.getTime() ?? 0;
+      const bDate = parseISO(displayToIso(bVal))?.getTime() ?? 0;
+      return (aDate - bDate) * state.sortDirection;
+    }
+
     return String(aVal).localeCompare(String(bVal)) * state.sortDirection;
   });
 
@@ -229,6 +238,13 @@ export function render() {
   renderTable();
 }
 
+export function updateSortIndicators() {
+  SORT_COLUMNS.forEach(c => {
+    const el = document.getElementById(`s-${c}`);
+    if (el) el.textContent = c === state.sortColumn ? (state.sortDirection === 1 ? '↑' : '↓') : '';
+  });
+}
+
 export function sortBy(col) {
   if (state.sortColumn === col) {
     state.sortDirection *= -1;
@@ -237,10 +253,6 @@ export function sortBy(col) {
     state.sortDirection = 1;
   }
 
-  SORT_COLUMNS.forEach(c => {
-    const el = document.getElementById(`s-${c}`);
-    if (el) el.textContent = c === state.sortColumn ? (state.sortDirection === 1 ? '↑' : '↓') : '';
-  });
-
+  updateSortIndicators();
   renderTable();
 }

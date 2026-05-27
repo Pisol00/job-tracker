@@ -2,7 +2,7 @@
 // Entry point — wires all static event listeners and bootstraps the app
 
 import { bootstrap }                  from './auth.js';
-import { render, sortBy }             from './render.js';
+import { render, sortBy, updateSortIndicators } from './render.js';
 import { ddBuild, ddSet, ddGet }      from './dropdown.js';
 import { openCal, closeCal }          from './calendar.js';
 import { state }                      from './state.js';
@@ -39,7 +39,7 @@ function readForm() {
     location:   ddGet('f_location'),
     applyDate,
     foundOn:    ddGet('f_foundOn'),
-    salary:     dom.f_salary.value,
+    salary:     dom.f_salary.value.trim() || '28000',
     status:     ddGet('f_status'),
     interview1: existing ? existing.interview1 : false,
     interview2: existing ? existing.interview2 : false,
@@ -182,6 +182,6 @@ window.addEventListener('load', () => {
   cacheDom();
   wireStaticListeners();
   initDropdowns();
-  sortBy('applyDate');
+  updateSortIndicators();
   bootstrap();
 });
